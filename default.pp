@@ -1,13 +1,17 @@
-Exec {
-  environment => 'HOME=/root LEIN_ROOT=1',
-  cwd         => '/home/netrunner',
-}
-
 node default {
-  include jinteki::init
+  include jinteki
 }
 
-class jinteki::init {
+class jinteki {
+  $root = '/vagrant'
+  $home = "${jinteki::root}/netrunner"
+
+  Exec {
+    environment => [ 'HOME=/root', 'LEIN_ROOT=1', ],
+    cwd         => $jinteki::home,
+    timeout     => '0',
+  }
+
   include jinteki::clone
   include jinteki::deps
   include jinteki::npm
@@ -29,9 +33,9 @@ class jinteki::init {
 
 class jinteki::clone {
   exec { 'gitclone':
-    cwd     => '/home',
+    cwd     => $jinteki::root,
     command => '/usr/bin/git clone https://github.com/mtgred/netrunner.git',
-    creates => '/home/netrunner',
+    creates => $jinteki::home,
   }
 }
 
@@ -43,7 +47,7 @@ class jinteki::deps {
 
 class jinteki::npm {
   exec { '/usr/bin/npm install':
-    creates => '/home/netrunner/node_modules/bcrypt/build/Release/bcrypt_lib.node',
+    creates => "${jinteki::home}/node_modules/bcrypt/build/Release/bcrypt_lib.node",
   }
 
   exec { '/usr/bin/npm install -g bower':
@@ -55,14 +59,14 @@ class jinteki::npm {
   }
 
   exec { '/usr/bin/npm install zmq':
-    cwd     => '/home/netrunner/node_modules',
-    creates => '/home/netrunner/node_modules/zmq/build/Release/zmq.node',
+    cwd     => "${jinteki::home}/node_modules",
+    creates => "${jinteki::home}/node_modules/zmq/build/Release/zmq.node",
   }
 }
 
 class jinteki::bower {
   exec { '/usr/local/bin/bower install --allow-root':
-    creates => '/home/netrunner/resources/public/lib/jquery/jquery.js',
+    creates => "${jinteki::home}/resources/public/lib/jquery/jquery.js",
   }
 }
 
@@ -85,14 +89,14 @@ class jinteki::leiningen {
 
 class jinteki::data {
   exec { '/usr/bin/coffee fetch.coffee':
-    cwd     => '/home/netrunner/data',
-    creates => '/home/netrunner/data/andb-cards.json',
+    cwd     => "${jinteki::home}/data",
+    creates => "${jinteki::home}/data/andb-cards.json",
   }
 }
 
 class jinteki::compile {
   exec { '/usr/local/bin/lein uberjar':
-    creates => '/home/netrunner/target/netrunner-0.1.0-SNAPSHOT-standalone.jar',
+    creates => "${jinteki::home}/target/netrunner-0.1.0-SNAPSHOT-standalone.jar",
   }
 }
 
@@ -104,19 +108,19 @@ define jinteki::def_service {
 
 class jinteki::service {
   file { '/etc/systemd/system/lein.service':
-    content => "[Unit]\nDescription=Compile and watch client side Clojurescript files\nAfter=sshd.service\n\n[Service]\nEnvironment=LEIN_ROOT=1\nWorkingDirectory=/home/netrunner\nExecStart=/usr/local/bin/lein cljsbuild auto dev",
+    content => "[Unit]\nDescription=Compile and watch client side Clojurescript files\nAfter=sshd.service\n\n[Service]\nEnvironment=LEIN_ROOT=1\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/lein cljsbuild auto dev",
   }
 
   file { '/etc/systemd/system/stylus.service':
-    content => "[Unit]\nDescription=Compile and watch CSS files\nAfter=sshd.service\n\n[Service]\nWorkingDirectory=/home/netrunner\nExecStart=/usr/local/bin/stylus -w src/css -o resources/public/css/",
+    content => "[Unit]\nDescription=Compile and watch CSS files\nAfter=sshd.service\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/stylus -w src/css -o resources/public/css/",
   }
 
   file { '/etc/systemd/system/netrunner.service':
-    content => "[Unit]\nDescription=Launch game server\nAfter=sshd.service\n\n[Service]\nExecStart=/usr/bin/java -jar /home/netrunner/target/netrunner-0.1.0-SNAPSHOT-standalone.jar",
+    content => "[Unit]\nDescription=Launch game server\nAfter=sshd.service\n\n[Service]\nExecStart=/usr/bin/java -jar ${jinteki::home}/target/netrunner-0.1.0-SNAPSHOT-standalone.jar",
   }
 
   file { '/etc/systemd/system/coffee.service':
-    content => "[Unit]\nDescription=Launch the Node server\nAfter=sshd.service\n\n[Service]\nWorkingDirectory=/home/netrunner\nExecStart=/usr/bin/coffee server.coffee",
+    content => "[Unit]\nDescription=Launch the Node server\nAfter=sshd.service\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/bin/coffee server.coffee",
   }
 
   jinteki::def_service { 'mongodb': }
@@ -124,5 +128,4 @@ class jinteki::service {
   jinteki::def_service { 'stylus': }
   jinteki::def_service { 'netrunner': }
   jinteki::def_service { 'coffee': }
-
 }
