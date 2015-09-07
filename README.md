@@ -8,4 +8,4 @@ Want a local development environment for https://github.com/mtgred/netrunner ?
 
 Some key Vagrant commands: `up`, `ssh`, `halt`, and `destroy`.
 
-The running code will be in '/vagrant/netrunner' inside the VM, and './netrunner' outside of it.
+The running code will be in '/home/netrunner' inside the VM. Be careful with `destroy`!
