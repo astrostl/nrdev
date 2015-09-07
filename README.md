@@ -6,6 +6,6 @@ Want a local development environment for https://github.com/mtgred/netrunner ?
 4. run `vagrant up` and wait a long time for it to complete
 5. point a web browser at http://localhost:1042/
 
-Some key Vagrant commands: `vagrant up`, `vagrant ssh`, `vagrant halt`, and `vagrant destroy`.
+Some key Vagrant commands: `up`, `ssh`, `halt`, and `destroy`.
 
 The running code will be in '/vagrant/netrunner' inside the VM, and './netrunner' outside of it.
