@@ -3,7 +3,7 @@ node default {
 }
 
 class jinteki {
-  $root = '/vagrant'
+  $root = '/home'
   $home = "${jinteki::root}/netrunner"
 
   Exec {
@@ -19,6 +19,7 @@ class jinteki {
   include jinteki::leiningen
   include jinteki::data
   include jinteki::compile
+  include jinteki::units
   include jinteki::service
 
   Class[jinteki::clone]
@@ -28,6 +29,7 @@ class jinteki {
   -> Class[jinteki::leiningen]
   -> Class[jinteki::data]
   -> Class[jinteki::compile]
+  -> Class[jinteki::units]
   -> Class[jinteki::service]
 }
 
@@ -102,27 +104,33 @@ class jinteki::compile {
 
 define jinteki::def_service {
   exec { "/bin/systemctl start ${name}":
-    unless => "/bin/systemctl is-active ${name}",
+    unless  => "/bin/systemctl is-active ${name}",
+  }
+
+  exec { "/bin/systemctl enable ${name}":
+    unless  => "/bin/systemctl is-enabled ${name}|/bin/grep -q enabled",
+  }
+}
+
+class jinteki::units {
+  file { '/etc/systemd/system/lein.service':
+    content => "[Unit]\nDescription=Compile and watch client side Clojurescript files\n\n[Service]\nEnvironment=LEIN_ROOT=1\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/lein cljsbuild auto dev\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
+  }
+
+  file { '/etc/systemd/system/stylus.service':
+    content => "[Unit]\nDescription=Compile and watch CSS files\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/stylus -w src/css -o resources/public/css/\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
+  }
+
+  file { '/etc/systemd/system/netrunner.service':
+    content => "[Unit]\nDescription=Launch game server\n\n[Service]\nExecStart=/usr/bin/java -jar ${jinteki::home}/target/netrunner-0.1.0-SNAPSHOT-standalone.jar\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
+  }
+
+  file { '/etc/systemd/system/coffee.service':
+    content => "[Unit]\nDescription=Launch the Node server\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/bin/coffee server.coffee\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
   }
 }
 
 class jinteki::service {
-  file { '/etc/systemd/system/lein.service':
-    content => "[Unit]\nDescription=Compile and watch client side Clojurescript files\nAfter=sshd.service\n\n[Service]\nEnvironment=LEIN_ROOT=1\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/lein cljsbuild auto dev",
-  }
-
-  file { '/etc/systemd/system/stylus.service':
-    content => "[Unit]\nDescription=Compile and watch CSS files\nAfter=sshd.service\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/stylus -w src/css -o resources/public/css/",
-  }
-
-  file { '/etc/systemd/system/netrunner.service':
-    content => "[Unit]\nDescription=Launch game server\nAfter=sshd.service\n\n[Service]\nExecStart=/usr/bin/java -jar ${jinteki::home}/target/netrunner-0.1.0-SNAPSHOT-standalone.jar",
-  }
-
-  file { '/etc/systemd/system/coffee.service':
-    content => "[Unit]\nDescription=Launch the Node server\nAfter=sshd.service\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/bin/coffee server.coffee",
-  }
-
   jinteki::def_service { 'mongodb': }
   jinteki::def_service { 'lein': }
   jinteki::def_service { 'stylus': }
