@@ -64,6 +64,21 @@ class jinteki::npm {
     cwd     => "${jinteki::home}/node_modules",
     creates => "${jinteki::home}/node_modules/zmq/build/Release/zmq.node",
   }
+  
+  exec { '/usr/bin/npm install node-trello':
+    cwd     => "${jinteki::home}/node_modules",
+    creates => "${jinteki::home}/node_modules/node-trello/lib/node-trello.js",
+  }
+
+  exec { '/usr/bin/npm install memory-cache':
+    cwd     => "${jinteki::home}/node_modules",
+    creates => "${jinteki::home}/node_modules/memory-cache/package.json",
+  }
+
+  exec { '/usr/bin/npm install node-uuid':
+    cwd     => "${jinteki::home}/node_modules",
+    creates => "${jinteki::home}/node_modules/node-uuid/package.json",
+  }
 }
 
 class jinteki::bower {
