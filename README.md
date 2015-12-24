@@ -1,4 +1,4 @@
-Want a local development environment for [jinteki.net Netrunner](https://github.com/mtgred/netrunner)?
+Want a single-command local development environment for [jinteki.net Netrunner](https://github.com/mtgred/netrunner)?
 
 1. install [VirtualBox](https://www.virtualbox.org)
 2. install [Vagrant](https://www.vagrantup.com)
