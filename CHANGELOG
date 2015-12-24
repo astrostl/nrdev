@@ -1,0 +1,2 @@
+12.24.15: switched Puppet to debug output
+12.24.15: added 'npms' class to ensure node_modules is present

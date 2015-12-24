@@ -5,6 +5,7 @@ node default {
 class jinteki {
   $root = '/home'
   $home = "${jinteki::root}/netrunner"
+#  $home = '/vagrant'
 
   Exec {
     environment => [ 'HOME=/root', 'LEIN_ROOT=1', ],
@@ -15,6 +16,7 @@ class jinteki {
   include jinteki::clone
   include jinteki::deps
   include jinteki::npm
+  include jinteki::npms
   include jinteki::bower
   include jinteki::leiningen
   include jinteki::data
@@ -25,6 +27,7 @@ class jinteki {
   Class[jinteki::clone]
   -> Class[jinteki::deps]
   -> Class[jinteki::npm]
+  -> Class[jinteki::npms]
   -> Class[jinteki::bower]
   -> Class[jinteki::leiningen]
   -> Class[jinteki::data]
@@ -59,7 +62,9 @@ class jinteki::npm {
   exec { '/usr/bin/npm install -g stylus':
     creates => '/usr/local/bin/stylus',
   }
+}
 
+class jinteki::npms {
   exec { '/usr/bin/npm install zmq':
     cwd     => "${jinteki::home}/node_modules",
     creates => "${jinteki::home}/node_modules/zmq/build/Release/zmq.node",
