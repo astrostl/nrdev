@@ -1,10 +1,9 @@
 Want a single-command local development environment for [jinteki.net Netrunner](https://github.com/mtgred/netrunner)?
 
-1. install [VirtualBox](https://www.virtualbox.org)
-2. install [Vagrant](https://www.vagrantup.com)
-3. clone this project from, well, here
-4. run `vagrant up` and get a cup of coffee
-5. point a web browser or two at http://localhost:1042/
+1. install [VirtualBox](https://www.virtualbox.org) and [Vagrant](https://www.vagrantup.com)
+2. clone this project from, well, here
+3. run `vagrant up` and get a cup of coffee
+4. point a web browser or two at http://localhost:1042/
 
 Some key [Vagrant commands](https://docs.vagrantup.com/v2/cli/index.html): `up`, `ssh`, `halt`, and `destroy`.
 
