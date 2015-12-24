@@ -3,9 +3,8 @@ node default {
 }
 
 class jinteki {
-  $root = '/home'
+  $root = '/vagrant'
   $home = "${jinteki::root}/netrunner"
-#  $home = '/vagrant'
 
   Exec {
     environment => [ 'HOME=/root', 'LEIN_ROOT=1', ],
