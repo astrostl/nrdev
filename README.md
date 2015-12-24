@@ -8,6 +8,6 @@ Want a local development environment for https://github.com/mtgred/netrunner ?
 
 Some key Vagrant commands: `up`, `ssh`, `halt`, and `destroy`. Be careful with `destroy`!
 
-The running code will be in '/vagrant/netrunner' inside the VM, and 'netrunner' outside of it. This is done using VirtualBox shared folders, and the benefit is that you can point an editor, IDE, etc. on your local system at the files inside the running VM environment.
+The running code will be in '/vagrant/netrunner' inside the VM, and 'netrunner' outside of it via [VirtualBox shared folders](https://www.virtualbox.org/manual/ch04.html#sharedfolders). Feel free to point an editor, IDE, etc. from your local system at the files.
 
 Pull requests, feature requests, and bug reports are very welcome. If you like the project, please STAR it!
