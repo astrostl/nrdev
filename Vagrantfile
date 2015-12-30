@@ -7,7 +7,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
      vb.memory = "2048"
   end
-  config.vm.provision "puppet" do |puppet|
+  config.vm.provision "puppet", run: "always" do |puppet|
     puppet.manifests_path = "."
     puppet.options = "--debug"
   end
