@@ -117,7 +117,7 @@ class jinteki::data {
 
 class jinteki::compile {
   exec { '/usr/local/bin/lein uberjar':
-    creates => "${jinteki::home}/target/netrunner-0.1.0-SNAPSHOT-standalone.jar",
+    creates => "${jinteki::home}/target/netrunner-standalone.jar",
   }
 }
 
