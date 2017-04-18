@@ -1,4 +1,0 @@
-12.24.15: switched Puppet to debug output
-12.24.15: added 'npms' class to ensure node_modules is present
-12.24.15: switched to shared folder for code storage
-12.30.15: configured provisioner to always run for services after a halt/up
