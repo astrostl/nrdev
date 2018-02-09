@@ -141,7 +141,7 @@ class jinteki::units {
   }
 
   file { '/etc/systemd/system/netrunner.service':
-    content => "[Unit]\nDescription=Launch game server\n\n[Service]\nExecStart=/usr/bin/java -jar ${jinteki::home}/target/netrunner-0.1.0-SNAPSHOT-standalone.jar\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
+    content => "[Unit]\nDescription=Launch game server\n\n[Service]\nExecStart=/usr/bin/java -jar ${jinteki::home}/target/netrunner-standalone.jar\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
   }
 
   file { '/etc/systemd/system/coffee.service':
