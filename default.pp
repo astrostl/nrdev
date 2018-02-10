@@ -13,6 +13,7 @@ class jinteki {
   }
 
   include jinteki::clone
+  include jinteki::nodeppa
   include jinteki::deps
   include jinteki::npm
   include jinteki::npms
@@ -24,6 +25,7 @@ class jinteki {
   include jinteki::service
 
   Class[jinteki::clone]
+  -> Class[jinteki::nodeppa]
   -> Class[jinteki::deps]
   -> Class[jinteki::npm]
   -> Class[jinteki::npms]
@@ -43,8 +45,15 @@ class jinteki::clone {
   }
 }
 
+class jinteki::nodeppa {
+  exec { 'nodeppa':
+    command => '/usr/bin/curl -sL https://deb.nodesource.com/setup_8.x|/bin/bash',
+    creates => '/etc/apt/sources.list.d/nodesource.list',
+  }
+}
+
 class jinteki::deps {
-  $packages = [ 'npm', 'mongodb', 'coffeescript', 'nodejs-legacy', 'default-jdk', 'libzmq3-dev', ]
+  $packages = [ 'mongodb', 'coffeescript', 'nodejs', 'default-jdk', 'libzmq3-dev', 'build-essential' ]
 
   package { $packages: }
 }
@@ -55,11 +64,11 @@ class jinteki::npm {
   }
 
   exec { '/usr/bin/npm install -g bower':
-    creates => '/usr/local/bin/bower',
+    creates => '/usr/bin/bower',
   }
 
   exec { '/usr/bin/npm install -g stylus':
-    creates => '/usr/local/bin/stylus',
+    creates => '/usr/bin/stylus',
   }
 }
 
@@ -86,7 +95,7 @@ class jinteki::npms {
 }
 
 class jinteki::bower {
-  exec { '/usr/local/bin/bower install --allow-root':
+  exec { '/usr/bin/bower install --allow-root':
     creates => "${jinteki::home}/resources/public/lib/jquery/jquery.js",
   }
 }
@@ -137,7 +146,7 @@ class jinteki::units {
   }
 
   file { '/etc/systemd/system/stylus.service':
-    content => "[Unit]\nDescription=Compile and watch CSS files\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/local/bin/stylus -w src/css -o resources/public/css/\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
+    content => "[Unit]\nDescription=Compile and watch CSS files\n\n[Service]\nWorkingDirectory=${jinteki::home}\nExecStart=/usr/bin/stylus -w src/css -o resources/public/css/\nType=idle\n\n[Install]\nWantedBy=multi-user.target\n",
   }
 
   file { '/etc/systemd/system/netrunner.service':
